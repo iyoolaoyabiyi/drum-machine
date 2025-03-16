@@ -1,113 +1,80 @@
-import Image from "next/image";
-import { Geist, Geist_Mono } from "next/font/google";
+import React, { useCallback, useState } from "react";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import Layout from "@/components/Layout";
+import DrumMachine from "@/components/DrumMachine";
+import DrumPad from "@/components/DrumPad";
 
 export default function Home() {
+  const [activePad, setActivePad] = useState<string | null>(null);
+
+  const drumKeys = [
+    { id: "Q", keyTrigger: "Q", audioSrc: "https://s3.amazonaws.com/freecodecamp/drums/Heater-1.mp3", name: "Heater 1" },
+    { id: "W", keyTrigger: "W", audioSrc: "https://s3.amazonaws.com/freecodecamp/drums/Heater-2.mp3", name: "Heater 2" },
+    { id: "E", keyTrigger: "E", audioSrc: "https://s3.amazonaws.com/freecodecamp/drums/Heater-3.mp3", name: "Heater 3" },
+    { id: "A", keyTrigger: "A", audioSrc: "https://s3.amazonaws.com/freecodecamp/drums/Heater-4_1.mp3", name: "Heater 4" },
+    { id: "S", keyTrigger: "S", audioSrc: "https://s3.amazonaws.com/freecodecamp/drums/Heater-6.mp3", name: "Clap" },
+    { id: "D", keyTrigger: "D", audioSrc: "https://s3.amazonaws.com/freecodecamp/drums/Dsc_Oh.mp3", name: "Open-HH" },
+    { id: "Z", keyTrigger: "Z", audioSrc: "https://s3.amazonaws.com/freecodecamp/drums/Kick_n_Hat.mp3", name: "Kick-n'-Hat" },
+    { id: "X", keyTrigger: "X", audioSrc: "https://s3.amazonaws.com/freecodecamp/drums/RP4_KICK_1.mp3", name: "Kick" },
+    { id: "C", keyTrigger: "C", audioSrc: "https://s3.amazonaws.com/freecodecamp/drums/Cev_H2.mp3", name: "Closed-HH" }
+  ];
+
+  const displayClip = (clipName: string) => {
+    const display = document.getElementById("display");
+    if (display) {
+      display.textContent = clipName;
+    }
+  };
+
+  const playSound = (e: React.MouseEvent<HTMLDivElement>) => {
+    const key = (e.target as HTMLDivElement).getAttribute("data-key") || "";
+    const audio = (e.target as HTMLDivElement).querySelector("audio");
+    setActivePad(key);
+    if (audio) {
+      audio.currentTime = 0;
+      audio.play();
+      displayClip(key);
+    }
+    setTimeout(() => setActivePad(null), 100); // Reset active pad after 100ms
+  };
+
+  const handleKeyPress = useCallback((e: KeyboardEvent) => {
+    const key = e.key.toUpperCase();
+    const drumPad = document.getElementById(key);
+    if (drumPad) {
+      drumPad.click();
+      displayClip(drumPad.getAttribute("data-key") || "");
+    }
+  }, []);
+
+  React.useEffect(() => {
+    document.addEventListener("keydown", handleKeyPress);
+    return () => {
+      document.removeEventListener("keydown", handleKeyPress);
+    };
+  }, [handleKeyPress]);
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/pages/index.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <Layout>
+      <h1 className="text-center text-6xl font-bold my-4 mb-16  ">Drum Machine</h1>
+      <DrumMachine>
+        <div id="display" className="px-2 uppercase font-bold text-center py-4 mb-4 max-w-50 m-auto rounded mb-[50px] bg-gray-100 text-black">
+          <p>Beat by Iyo...</p>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+        <div id="drumpads" className="grid grid-cols-3 gap-4 m-auto">
+          {drumKeys.map((drumKey) => (
+            <DrumPad
+              key={drumKey.id}
+              id={drumKey.id}
+              keyTrigger={drumKey.keyTrigger}
+              audioSrc={drumKey.audioSrc}
+              clickFunc={playSound}
+              keyName={drumKey.name}
+              active={activePad === drumKey.name}
+            />
+          ))}
+        </div>
+      </DrumMachine>
+    </Layout>
   );
 }
