@@ -41,14 +41,6 @@ This project is a Drum Machine application built as part of the freeCodeCamp cer
 - `public/` - Contains the HTML file and static assets.
 - `src/` - Contains the React components and styles.
 
-## License
-
-This project is licensed under the MIT License.
-
 ## Acknowledgements
 
 - [freeCodeCamp](https://www.freecodecamp.org/) for providing the project idea and resources.
-
-Feel free to contribute to the project by opening issues or submitting pull requests.
-
-Happy drumming!
