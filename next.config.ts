@@ -7,7 +7,7 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
   },
-  basePath: '/drum-machine',
+  // basePath: '/drum-machine',
 };
 
 export default nextConfig;
