@@ -1,3 +1,4 @@
+import Head from "next/head";
 import React, { useCallback, useState } from "react";
 
 import Layout from "@/components/Layout";
@@ -55,26 +56,31 @@ export default function Home() {
   }, [handleKeyPress]);
 
   return (
-    <Layout>
-      <h1 className="text-center text-6xl font-bold my-4 mb-16  ">Drum Machine</h1>
-      <DrumMachine>
-        <div id="display" className="px-2 uppercase font-bold text-center py-4 mb-4 max-w-50 m-auto rounded mb-[50px] bg-gray-100 text-black">
-          <p>Beat by Iyo...</p>
-        </div>
-        <div id="drumpads" className="grid grid-cols-3 gap-4 m-auto">
-          {drumKeys.map((drumKey) => (
-            <DrumPad
-              key={drumKey.id}
-              id={drumKey.id}
-              keyTrigger={drumKey.keyTrigger}
-              audioSrc={drumKey.audioSrc}
-              clickFunc={playSound}
-              keyName={drumKey.name}
-              active={activePad === drumKey.name}
-            />
-          ))}
-        </div>
-      </DrumMachine>
-    </Layout>
+    <>
+      <Head>
+        <title>Drum Machine by Iyo</title>
+      </Head>
+      <Layout>
+        <h1 className="text-center text-6xl font-bold my-4 mb-16  ">Drum Machine</h1>
+        <DrumMachine>
+          <div id="display" className="px-2 uppercase font-bold text-center py-4 mb-4 max-w-50 m-auto rounded mb-[50px] bg-gray-100 text-black">
+            <p>Beat by Iyo...</p>
+          </div>
+          <div id="drumpads" className="grid grid-cols-3 gap-4 m-auto">
+            {drumKeys.map((drumKey) => (
+              <DrumPad
+                key={drumKey.id}
+                id={drumKey.id}
+                keyTrigger={drumKey.keyTrigger}
+                audioSrc={drumKey.audioSrc}
+                clickFunc={playSound}
+                keyName={drumKey.name}
+                active={activePad === drumKey.name}
+              />
+            ))}
+          </div>
+        </DrumMachine>
+      </Layout>
+    </>
   );
 }
